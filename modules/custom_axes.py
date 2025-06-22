@@ -95,3 +95,10 @@ class CustomAxes(VGroup):
         path = VMobject(**kwargs)
         path.set_points_as_corners(points)
         return path 
+    
+    def get_x_unit(self):
+        return self.x_unit
+    
+    def get_y_unit(self):
+        return self.y_unit
+    
