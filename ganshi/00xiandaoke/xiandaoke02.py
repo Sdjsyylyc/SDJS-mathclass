@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from modules import SliderComponent, CustomAxes, CollisionEffect
+from modules import SliderComponent, CustomAxes, CollisionEffect, LinearFunctionPointSlope
 
 class Xiandaoke02(Scene):
     def construct(self):
@@ -55,11 +55,21 @@ class Xiandaoke02(Scene):
         # 使用倾斜角参数 theta 来控制斜率 a = tan(theta)
         theta_tracker = ValueTracker(PI/3)  # 初始角度60度
         
+        # 创建点斜式直线对象 - 通过点(1,0)，角度由theta_tracker控制
+        point_slope_line = LinearFunctionPointSlope(
+            point=(1, 0),  # 固定点 (1, 0)
+            angle=theta_tracker  # 倾斜角由ValueTracker控制
+        )
+        
         def get_rotating_line():
-            theta = theta_tracker.get_value()
-            a = np.tan(theta)  # 斜率 = tan(倾斜角)
-            # 直线方程：y = a(x-1)  (通过定点(1,0))
-            return axes.plot(lambda x: a * (x-1), x_range=[-3, 3], color=YELLOW)
+            # 使用LinearFunctionPointSlope的plot_in方法绘制直线
+            return point_slope_line.plot_in(
+                axes=axes,
+                x_range=(-3, 3),
+                y_range=(-3, 3),  # 限制y范围在可视区域内
+                color=YELLOW,
+                stroke_width=2
+            )
         
         # 让第二部分函数闪烁，提示即将绘制直线
         for _ in range(2):
@@ -80,12 +90,18 @@ class Xiandaoke02(Scene):
         from scipy.optimize import fsolve
         
         def find_all_intersections():
-            theta = theta_tracker.get_value()
-            a = np.tan(theta)
+            # 获取点斜式直线的函数和斜率
+            line_func = point_slope_line.get_function()
+            a = point_slope_line.get_slope()
             
             # 定义方程：e^x * (2x-1) - a(x-1) = 0
             def equation(x):
-                return np.exp(x) * (2*x - 1) - a * (x - 1)
+                try:
+                    exp_part = np.exp(x) * (2*x - 1)
+                    line_part = line_func(x)
+                    return exp_part - line_part
+                except:
+                    return float('inf')
             
             try:
                 # 尝试在更多的初始猜测点求解
@@ -167,8 +183,7 @@ class Xiandaoke02(Scene):
         
         # 创建动态滑块圆点
         def get_slider_dot():
-            theta = theta_tracker.get_value()
-            a = np.tan(theta)
+            a = point_slope_line.get_slope()  # 使用点斜式直线对象的斜率
             pos_x = slope_to_position(a)
             dot = Dot(color=YELLOW, radius=0.08)
             dot.move_to(slider_track.get_center() + RIGHT * pos_x)
@@ -196,9 +211,42 @@ class Xiandaoke02(Scene):
         self.wait(1)
 
         self.play(
-            theta_tracker.animate.set_value(0.15*PI/2),  # 90度
+            theta_tracker.animate.set_value(0.15*PI/2),  # 13.5度
             run_time=2,
             rate_func=smooth
         )
         self.wait(1)
+        
+
+        
+        self.play(
+            theta_tracker.animate.set_value(PI/4),  
+            run_time=2,
+            rate_func=smooth
+        )
+
+        # 在点(0, -1)处发生碰撞效果
+        tangent_point1 = axes.c2p(0, -1)
+        collision_effect1 = CollisionEffect(tangent_point1, color=YELLOW, duration=1.0)
+        self.add(collision_effect1.get_lines())
+        self.play(collision_effect1.get_animation())
+        self.remove(collision_effect1.get_lines())
+        
+        self.wait(2)  # 停顿2秒
+
+        self.play(
+            theta_tracker.animate.set_value(PI/4),  
+            run_time=2,
+            rate_func=smooth
+        )
+
+        # 在点(0, -1)处发生碰撞效果
+        tangent_point1 = axes.c2p(0, -1)
+        collision_effect1 = CollisionEffect(tangent_point1, color=YELLOW, duration=1.0)
+        self.add(collision_effect1.get_lines())
+        self.play(collision_effect1.get_animation())
+        self.remove(collision_effect1.get_lines())
+        
+        self.wait(2)  # 停顿2秒
+        
         
