@@ -1479,4 +1479,250 @@ class Hyperbola:
             except:
                 return VMobject()
         
+        return create_curve()
+
+
+class Circle:
+    """圆：圆心在任意位置的圆 (x-h)² + (y-k)² = r²"""
+    
+    def __init__(self, center, radius):
+        """
+        初始化圆
+        
+        Args:
+            center: 圆心坐标，可以是(h, k)元组或包含ValueTracker的列表
+            radius: 半径，可以是ValueTracker或数值
+        """
+        self.center = center
+        self.radius = radius
+    
+    def _get_param_value(self, param):
+        """获取参数的实际数值"""
+        if isinstance(param, ValueTracker):
+            return param.get_value()
+        return param
+    
+    def _get_center_value(self):
+        """获取圆心的实际坐标"""
+        if isinstance(self.center[0], ValueTracker):
+            return (self.center[0].get_value(), self.center[1].get_value())
+        return self.center
+    
+    def get_parametric_function(self):
+        """返回参数方程 (x(t), y(t))"""
+        def parametric_func(t):
+            h, k = self._get_center_value()
+            r = self._get_param_value(self.radius)
+            x = h + r * math.cos(t)
+            y = k + r * math.sin(t)
+            return (x, y)
+        
+        return parametric_func
+    
+    def get_center_coordinate(self):
+        """获取圆心坐标"""
+        return self._get_center_value()
+    
+    def get_radius_value(self):
+        """获取半径值"""
+        return self._get_param_value(self.radius)
+    
+    def get_diameter(self):
+        """获取直径"""
+        return 2 * self._get_param_value(self.radius)
+    
+    def get_circumference(self):
+        """获取周长"""
+        r = self._get_param_value(self.radius)
+        return 2 * math.pi * r
+    
+    def get_area(self):
+        """获取面积"""
+        r = self._get_param_value(self.radius)
+        return math.pi * r * r
+    
+    def get_center_dot(self, axes, color=WHITE, radius=0.05):
+        """获取圆心的Dot对象"""
+        h, k = self._get_center_value()
+        dot = Dot(axes.coords_to_point(h, k), 
+                 color=color, radius=radius)
+        return dot
+    
+    def get_diameter_line(self, axes, angle=0, color=WHITE, stroke_width=1):
+        """
+        获取指定角度的直径线段
+        
+        Args:
+            axes: Manim的Axes对象
+            angle: 直径的角度（弧度），默认为0（水平）
+            color: 线条颜色
+            stroke_width: 线条宽度
+            
+        Returns:
+            Line: 直径线段对象
+        """
+        h, k = self._get_center_value()
+        r = self._get_param_value(self.radius)
+        
+        # 计算直径两端点
+        x1 = h + r * math.cos(angle)
+        y1 = k + r * math.sin(angle)
+        x2 = h - r * math.cos(angle)
+        y2 = k - r * math.sin(angle)
+        
+        line = Line(
+            axes.coords_to_point(x1, y1),
+            axes.coords_to_point(x2, y2),
+            color=color, stroke_width=stroke_width
+        )
+        return line
+    
+    def get_radius_line(self, axes, angle=0, color=WHITE, stroke_width=1):
+        """
+        获取指定角度的半径线段
+        
+        Args:
+            axes: Manim的Axes对象
+            angle: 半径的角度（弧度），默认为0（向右）
+            color: 线条颜色
+            stroke_width: 线条宽度
+            
+        Returns:
+            Line: 半径线段对象
+        """
+        h, k = self._get_center_value()
+        r = self._get_param_value(self.radius)
+        
+        # 计算半径端点
+        x = h + r * math.cos(angle)
+        y = k + r * math.sin(angle)
+        
+        line = Line(
+            axes.coords_to_point(h, k),
+            axes.coords_to_point(x, y),
+            color=color, stroke_width=stroke_width
+        )
+        return line
+    
+    def get_tangent_line_at_angle(self, axes, angle, length_factor=2, color=WHITE, stroke_width=1):
+        """
+        获取在指定角度处的切线
+        
+        Args:
+            axes: Manim的Axes对象
+            angle: 切点角度（弧度）
+            length_factor: 切线长度系数（相对于半径）
+            color: 线条颜色
+            stroke_width: 线条宽度
+            
+        Returns:
+            Line: 切线对象
+        """
+        h, k = self._get_center_value()
+        r = self._get_param_value(self.radius)
+        
+        # 切点坐标
+        x0 = h + r * math.cos(angle)
+        y0 = k + r * math.sin(angle)
+        
+        # 切线方向（垂直于半径）
+        tangent_angle = angle + math.pi / 2
+        length = r * length_factor
+        
+        # 切线两端点
+        x1 = x0 + length * math.cos(tangent_angle) / 2
+        y1 = y0 + length * math.sin(tangent_angle) / 2
+        x2 = x0 - length * math.cos(tangent_angle) / 2
+        y2 = y0 - length * math.sin(tangent_angle) / 2
+        
+        line = Line(
+            axes.coords_to_point(x1, y1),
+            axes.coords_to_point(x2, y2),
+            color=color, stroke_width=stroke_width
+        )
+        return line
+    
+    def is_point_inside(self, point):
+        """
+        判断点是否在圆内
+        
+        Args:
+            point: 点坐标 (x, y)
+            
+        Returns:
+            bool: True表示在圆内，False表示在圆外
+        """
+        h, k = self._get_center_value()
+        r = self._get_param_value(self.radius)
+        x, y = point
+        
+        distance_squared = (x - h) ** 2 + (y - k) ** 2
+        return distance_squared < r ** 2
+    
+    def is_point_on_circle(self, point, tolerance=1e-6):
+        """
+        判断点是否在圆上
+        
+        Args:
+            point: 点坐标 (x, y)
+            tolerance: 误差容限
+            
+        Returns:
+            bool: True表示在圆上，False表示不在圆上
+        """
+        h, k = self._get_center_value()
+        r = self._get_param_value(self.radius)
+        x, y = point
+        
+        distance_squared = (x - h) ** 2 + (y - k) ** 2
+        return abs(distance_squared - r ** 2) < tolerance
+    
+    def get_distance_from_center(self, point):
+        """
+        获取点到圆心的距离
+        
+        Args:
+            point: 点坐标 (x, y)
+            
+        Returns:
+            float: 距离值
+        """
+        h, k = self._get_center_value()
+        x, y = point
+        return math.sqrt((x - h) ** 2 + (y - k) ** 2)
+    
+    def plot_in(self, axes, color=WHITE, stroke_width=2, stroke_opacity=1):
+        """
+        在指定的坐标轴中绘制圆
+        
+        Args:
+            axes: Manim的Axes对象
+            color: 线条颜色，可以是ValueTracker或颜色值
+            stroke_width: 线条宽度，可以是ValueTracker或数值
+            stroke_opacity: 线条透明度，可以是ValueTracker或数值
+            
+        Returns:
+            VMobject: 圆图像对象
+        """
+        def _get_param_value(param):
+            """获取参数的实际值"""
+            if isinstance(param, ValueTracker):
+                return param.get_value()
+            return param
+        
+        def create_curve():
+            parametric_func = self.get_parametric_function()
+            
+            try:
+                curve = ParametricFunction(
+                    lambda t: axes.coords_to_point(*parametric_func(t)),
+                    t_range=[0, 2 * math.pi],
+                    color=_get_param_value(color),
+                    stroke_width=_get_param_value(stroke_width),
+                    stroke_opacity=_get_param_value(stroke_opacity)
+                )
+                return curve
+            except:
+                return VMobject()
+        
         return create_curve() 
