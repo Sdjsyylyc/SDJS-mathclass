@@ -10,7 +10,7 @@ class CollisionEffect:
     适用于表示数学概念中的"接触"、"相切"或"碰撞"等情况。
     """
     
-    def __init__(self, center_point, outer_radius=0.1, inner_radius=0.03, 
+    def __init__(self, center_point, outer_radius=0.2, inner_radius=0.03, 
                  stroke_width=2, color=YELLOW, num_lines=12, duration=1.0):
         """
         初始化碰撞特效。
