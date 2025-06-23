@@ -1715,7 +1715,7 @@ class CustomCircle:
             
             try:
                 curve = ParametricFunction(
-                    lambda t: axes.coords_to_point(*parametric_func(t)),
+                    lambda t: axes.c2p(*parametric_func(t)),
                     t_range=[0, 2 * math.pi],
                     color=_get_param_value(color),
                     stroke_width=_get_param_value(stroke_width),
