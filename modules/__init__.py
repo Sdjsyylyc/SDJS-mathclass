@@ -15,6 +15,10 @@ from .function_definitions import (
     ExponentialFunction,
     LogarithmicFunction,
     PowerFunction,
+    Ellipse,
+    Parabola,
+    Hyperbola,
+    CustomCircle,
 )
 
 __all__ = [
@@ -27,6 +31,10 @@ __all__ = [
     "ExponentialFunction",
     "LogarithmicFunction",
     "PowerFunction",
+    "Ellipse",
+    "Parabola",
+    "Hyperbola",
+    "CustomCircle",
 ]
 
 __version__ = "1.0.0"

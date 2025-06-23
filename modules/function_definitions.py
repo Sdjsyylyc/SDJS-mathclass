@@ -1482,7 +1482,7 @@ class Hyperbola:
         return create_curve()
 
 
-class Circle:
+class CustomCircle:
     """圆：圆心在任意位置的圆 (x-h)² + (y-k)² = r²"""
     
     def __init__(self, center, radius):

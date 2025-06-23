@@ -228,4 +228,16 @@ class CustomAxes(VGroup):
         if hasattr(self, 'y_axis_label'):
             self.y_axis_label.set_opacity(0)
     
+    def shift(self, shift_vector):
+        self.origin_point += shift_vector
+        return super().shift(shift_vector)
+    
+    def scale(self, scale_factor):
+        self.x_unit *= scale_factor
+        self.y_unit *= scale_factor
+        return super().scale(scale_factor)
+    
+    def move_to(self, position):
+        self.origin_point = position
+        return super().move_to(position)
     
