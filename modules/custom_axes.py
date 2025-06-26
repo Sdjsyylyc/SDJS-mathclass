@@ -39,7 +39,7 @@ class CustomAxes(VGroup):
         
         # 默认标签配置
         default_label_config = {
-            "font_size": 24,
+            "font_size": 40,
             "color": WHITE,
         }
         if label_config:
@@ -80,7 +80,7 @@ class CustomAxes(VGroup):
         # 创建轴标签
         if self.axis_labels:
             # x轴标签 - 位于x轴箭头右侧
-            self.x_axis_label = Text(
+            self.x_axis_label = MathTex(
                 self.x_label,
                 font_size=self.label_config["font_size"],
                 color=self.label_config["color"]
@@ -88,7 +88,7 @@ class CustomAxes(VGroup):
             self.x_axis_label.move_to(self.x_axis.get_end()+0.2*RIGHT)
             
             # y轴标签 - 位于y轴箭头上方
-            self.y_axis_label = Text(
+            self.y_axis_label = MathTex(
                 self.y_label,
                 font_size=self.label_config["font_size"],
                 color=self.label_config["color"]
@@ -105,6 +105,10 @@ class CustomAxes(VGroup):
         
         # 加上坐标系在屏幕上的位置偏移
         return self.origin_point + np.array([screen_x, screen_y, 0])
+    
+    def coords_to_point(self, x, y):
+        """坐标转换：数学坐标到屏幕坐标"""
+        return self.c2p(x, y)
     
     def p2c(self, point):
         """坐标转换：屏幕坐标到数学坐标"""
