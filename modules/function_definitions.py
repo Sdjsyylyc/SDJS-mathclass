@@ -1580,6 +1580,14 @@ class CustomCircle:
                  color=color, radius=radius)
         return dot
     
+    def get_radius_dot(self, axes, angle=0, color=WHITE, radius=0.05):
+        """获取半径的Dot对象"""
+        h, k = self._get_center_value()
+        r = self._get_param_value(self.radius)
+        dot = Dot(axes.coords_to_point(h + r * math.cos(angle), k + r * math.sin(angle)), 
+                 color=color, radius=radius)
+        return dot
+    
     def get_diameter_line(self, axes, angle=0, color=WHITE, stroke_width=1):
         """
         获取指定角度的直径线段
