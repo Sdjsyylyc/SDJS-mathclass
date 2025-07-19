@@ -26,9 +26,13 @@ class LinearFunctionTwoPoints:
     
     def _get_point_value(self, point):
         """获取点的实际数值"""
-        if isinstance(point[0], ValueTracker):
-            return (point[0].get_value(), point[1].get_value())
-        return point
+        x = point[0]
+        y = point[1]
+        if isinstance(x, ValueTracker):
+            x = x.get_value()
+        if isinstance(y, ValueTracker):
+            y = y.get_value()
+        return (x, y)
     
     def get_function(self):
         """返回函数句柄"""
@@ -257,9 +261,13 @@ class LinearFunctionPointSlope:
     
     def _get_point_value(self, point):
         """获取点的实际数值"""
-        if isinstance(point[0], ValueTracker):
-            return (point[0].get_value(), point[1].get_value())
-        return point
+        x = point[0]
+        y = point[1]
+        if isinstance(x, ValueTracker):
+            x = x.get_value()
+        if isinstance(y, ValueTracker):
+            y = y.get_value()
+        return (x, y)
     
     def _get_angle_value(self):
         """获取角度的实际数值"""
