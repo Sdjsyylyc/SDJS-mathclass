@@ -35,15 +35,38 @@ class LinearFunctionTwoPoints:
         def func(x):
             p1 = self._get_point_value(self.point1)
             p2 = self._get_point_value(self.point2)
-            
             x1, y1 = p1
             x2, y2 = p2
+
+            slope = self.get_slope()
+
+            if np.isinf(slope):
+                # 垂直线逻辑
+                x1_fin, y1_fin = not np.isinf(x1), not np.isinf(y1)
+                x2_fin, y2_fin = not np.isinf(x2), not np.isinf(y2)
+                x_val = None
+                if x1_fin and not y1_fin and x2_fin and y2_fin: x_val = x2
+                elif x2_fin and not y2_fin and x1_fin and y1_fin: x_val = x1
+                elif x1_fin and x2_fin: x_val = x1
+                if x_val is not None:
+                    return float('inf') if x == x_val else float('nan')
             
-            if abs(x2 - x1) < 1e-10:  # 垂直线
-                return float('inf') if x == x1 else float('nan')
+            elif slope == 0:
+                # 水平线逻辑
+                x1_fin, y1_fin = not np.isinf(x1), not np.isinf(y1)
+                x2_fin, y2_fin = not np.isinf(x2), not np.isinf(y2)
+                if not x1_fin and y1_fin and x2_fin and y2_fin: return y2
+                if not x2_fin and y2_fin and x1_fin and y1_fin: return y1
+                if y1_fin and y2_fin: return y1
+
+            elif not np.isnan(slope):
+                # 斜线逻辑
+                if not np.isinf(x1) and not np.isinf(y1):
+                    return y1 + slope * (x - x1)
+                elif not np.isinf(x2) and not np.isinf(y2):
+                    return y2 + slope * (x - x2)
             
-            # 两点式公式：(y - y1) / (y2 - y1) = (x - x1) / (x2 - x1)
-            return y1 + (y2 - y1) * (x - x1) / (x2 - x1)
+            return float('nan')  # 不明确的情况
         
         return func
     
@@ -51,31 +74,80 @@ class LinearFunctionTwoPoints:
         """获取当前斜率"""
         p1 = self._get_point_value(self.point1)
         p2 = self._get_point_value(self.point2)
-        
         x1, y1 = p1
         x2, y2 = p2
-        
-        if abs(x2 - x1) < 1e-10:
+
+        # 处理inf坐标
+        x1_fin, y1_fin = not np.isinf(x1), not np.isinf(y1)
+        x2_fin, y2_fin = not np.isinf(x2), not np.isinf(y2)
+
+        # 两个点都有效
+        if x1_fin and y1_fin and x2_fin and y2_fin:
+            if abs(x1 - x2) < 1e-10:
+                return float('inf')  # 垂直线
+            if abs(y1 - y2) < 1e-10:
+                return 0  # 水平线
+            return (y2 - y1) / (x2 - x1)
+
+        # 一个点定义方向，另一个点定义位置
+        # P1=(finite, inf), P2=(finite, finite) -> 垂直线
+        if x1_fin and not y1_fin and x2_fin and y2_fin: return float('inf')
+        # P2=(finite, inf), P1=(finite, finite) -> 垂直线
+        if x2_fin and not y2_fin and x1_fin and y1_fin: return float('inf')
+
+        # P1=(inf, finite), P2=(finite, finite) -> 水平线
+        if not x1_fin and y1_fin and x2_fin and y2_fin: return 0
+        # P2=(inf, finite), P1=(finite, finite) -> 水平线
+        if not x2_fin and y2_fin and x1_fin and y1_fin: return 0
+
+        # 两个点都包含inf
+        # P1=(x1, inf), P2=(x2, inf) -> 垂直线 (要求x1==x2)
+        if x1_fin and not y1_fin and x2_fin and not y2_fin and abs(x1-x2) < 1e-10:
             return float('inf')
-        
-        return (y2 - y1) / (x2 - x1)
+        # P1=(inf, y1), P2=(inf, y2) -> 水平线 (要求y1==y2)
+        if not x1_fin and y1_fin and not x2_fin and y2_fin and abs(y1-y2) < 1e-10:
+            return 0
+            
+        return float('nan')  # 其他情况不明确
     
     def get_range(self, y_min, y_max):
         """根据y范围返回对应的x范围"""
+        slope = self.get_slope()
+
+        if np.isinf(slope):  # 垂直线
+            p1 = self._get_point_value(self.point1)
+            p2 = self._get_point_value(self.point2)
+            x1, _ = p1
+            x2, _ = p2
+            x_val = x1 if not np.isinf(x1) else x2
+            return (x_val, x_val)
+
+        if abs(slope) < 1e-10:  # 水平线
+            p1 = self._get_point_value(self.point1)
+            p2 = self._get_point_value(self.point2)
+            _, y1 = p1
+            _, y2 = p2
+            y_val = y1 if not np.isinf(y1) else y2
+            
+            if y_min <= y_val <= y_max:
+                return (float('-inf'), float('inf'))
+            else:
+                return (float('nan'), float('nan'))
+
+        # 斜线
         p1 = self._get_point_value(self.point1)
         p2 = self._get_point_value(self.point2)
-        
         x1, y1 = p1
         x2, y2 = p2
         
-        if abs(x2 - x1) < 1e-10:  # 垂直线
-            return (x1, x1)
+        ref_x, ref_y = (x1, y1) if not np.isinf(x1) else (x2, y2)
         
-        slope = (y2 - y1) / (x2 - x1)
-        
-        # 根据 y = y1 + slope * (x - x1) 求解 x
-        x_at_y_min = x1 + (y_min - y1) / slope
-        x_at_y_max = x1 + (y_max - y1) / slope
+        if np.isinf(ref_x) or np.isinf(ref_y):
+             return (float('nan'), float('nan'))
+
+        # 根据 y = ref_y + slope * (x - ref_x) 求解 x
+        x_at_y_min = ref_x + (y_min - ref_y) / slope
+        x_at_y_max = ref_x + (y_max - ref_y) / slope
         
         return (min(x_at_y_min, x_at_y_max), max(x_at_y_min, x_at_y_max))
     
@@ -101,6 +173,37 @@ class LinearFunctionTwoPoints:
             return param
         
         def create_graph():
+            slope = self.get_slope()
+
+            if np.isinf(slope):
+                p1 = self._get_point_value(self.point1)
+                p2 = self._get_point_value(self.point2)
+                x1, y1 = p1
+                x2, y2 = p2
+                x1_fin, y1_fin = not np.isinf(x1), not np.isinf(y1)
+                x2_fin, y2_fin = not np.isinf(x2), not np.isinf(y2)
+
+                x_val = None
+                # 情况1：一个点定义了垂直方向，另一个点（必须是完全有限的）定义了位置
+                if x1_fin and not y1_fin and x2_fin and y2_fin:
+                    x_val = x2
+                elif x2_fin and not y2_fin and x1_fin and y1_fin:
+                    x_val = x1
+                # 情况2：两个点的x坐标相等
+                elif x1_fin and x2_fin and abs(x1 - x2) < 1e-10:
+                    x_val = x1
+                
+                if x_val is not None:
+                    y_start, y_end = y_range if y_range is not None else (axes.y_range[0], axes.y_range[1])
+                    start_point = axes.coords_to_point(x_val, y_start)
+                    end_point = axes.coords_to_point(x_val, y_end)
+                    return Line(start_point, end_point, 
+                                color=_get_param_value(color),
+                                stroke_width=_get_param_value(stroke_width),
+                                stroke_opacity=_get_param_value(stroke_opacity))
+                else:
+                    return VMobject() # 无法确定垂直线的位置
+
             func = self.get_function()
             x_min, x_max = x_range
             
@@ -228,6 +331,18 @@ class LinearFunctionPointSlope:
             return param
         
         def create_graph():
+            slope = self.get_slope()
+
+            if np.isinf(slope):
+                x0, _ = self._get_point_value(self.point)
+                y_start, y_end = y_range if y_range is not None else (axes.y_range[0], axes.y_range[1])
+                start_point = axes.coords_to_point(x0, y_start)
+                end_point = axes.coords_to_point(x0, y_end)
+                return Line(start_point, end_point,
+                            color=_get_param_value(color),
+                            stroke_width=_get_param_value(stroke_width),
+                            stroke_opacity=_get_param_value(stroke_opacity))
+
             func = self.get_function()
             x_min, x_max = x_range
             
