@@ -7,7 +7,7 @@ class CustomAxes(VGroup):
         x_range=[-5, 5, 1],
         y_range=[-3, 3, 1],
         x_length=10,
-        y_length=6,
+        y_length=None,
         axis_config=None,
         origin_point=ORIGIN,  # 坐标系原点在屏幕上的位置
         axis_labels=True,     # 是否显示轴标签
@@ -21,8 +21,8 @@ class CustomAxes(VGroup):
         self.x_range = x_range
         self.y_range = y_range
         self.x_length = x_length
-        self.y_length = y_length
-        self.origin_point = origin_point
+        self.y_length = y_length if y_length is not None else x_length*((y_range[1]-y_range[0])/(x_range[1]-x_range[0]))
+        self.origin_point = np.array(origin_point) # Create a copy to avoid modifying the global ORIGIN
         self.axis_labels = axis_labels
         self.x_label = x_label
         self.y_label = y_label
@@ -192,7 +192,6 @@ class CustomAxes(VGroup):
     def set_origin_point(self, new_origin):
         """设置坐标系原点位置"""
         self.origin_point = new_origin
-        self.move_to(new_origin)
     
     def get_x_unit(self):
         return self.x_unit
@@ -231,17 +230,16 @@ class CustomAxes(VGroup):
             self.x_axis_label.set_opacity(0)
         if hasattr(self, 'y_axis_label'):
             self.y_axis_label.set_opacity(0)
-    
+
     def shift(self, shift_vector):
+        # 首先，将逻辑原点移动相应的向量
         self.origin_point += shift_vector
-        return super().shift(shift_vector)
+        # 然后，调用父类的方法来移动所有视觉元素
+        super().shift(shift_vector)
+        return self
     
-    def scale(self, scale_factor):
-        self.x_unit *= scale_factor
-        self.y_unit *= scale_factor
-        return super().scale(scale_factor)
-    
-    def move_to(self, position):
-        self.origin_point = position
-        return super().move_to(position)
+    # def scale(self, scale_factor):
+    #     self.x_unit *= scale_factor
+    #     self.y_unit *= scale_factor
+    #     return super().scale(scale_factor)
     

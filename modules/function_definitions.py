@@ -155,7 +155,7 @@ class LinearFunctionTwoPoints:
         
         return (min(x_at_y_min, x_at_y_max), max(x_at_y_min, x_at_y_max))
     
-    def plot_in(self, axes, x_range, y_range=None, color=WHITE, stroke_width=2, stroke_opacity=1):
+    def plot_in(self, axes, x_range=None, y_range=None, color=WHITE, stroke_width=2, stroke_opacity=1):
         """
         在指定的坐标轴中绘制函数图像
         
@@ -209,19 +209,17 @@ class LinearFunctionTwoPoints:
                     return VMobject() # 无法确定垂直线的位置
 
             func = self.get_function()
-            x_min, x_max = x_range
+            x_min, x_max = x_range if x_range is not None else (axes.x_range[0], axes.x_range[1])
             
-            # 如果有y_range限制，需要调整x_range
-            if y_range is not None:
-                y_min, y_max = y_range
-                try:
-                    # 计算在y_range限制下的实际x范围
-                    func_x_range = self.get_range(y_min, y_max)
-                    if not (math.isnan(func_x_range[0]) or math.isnan(func_x_range[1])):
-                        x_min = max(x_min, func_x_range[0])
-                        x_max = min(x_max, func_x_range[1])
-                except:
-                    pass
+            y_min, y_max = y_range if y_range is not None else (axes.y_range[0], axes.y_range[1])
+            try:
+                # 计算在y_range限制下的实际x范围
+                func_x_range = self.get_range(y_min, y_max)
+                if not (math.isnan(func_x_range[0]) or math.isnan(func_x_range[1])):
+                    x_min = max(x_min, func_x_range[0])
+                    x_max = min(x_max, func_x_range[1])
+            except:
+                pass
             
             # 创建受限制的函数
             def limited_func(x):
@@ -317,7 +315,7 @@ class LinearFunctionPointSlope:
         
         return (min(x_at_y_min, x_at_y_max), max(x_at_y_min, x_at_y_max))
     
-    def plot_in(self, axes, x_range, y_range=None, color=WHITE, stroke_width=2, stroke_opacity=1):
+    def plot_in(self, axes, x_range=None, y_range=None, color=WHITE, stroke_width=2, stroke_opacity=1):
         """
         在指定的坐标轴中绘制函数图像
         
@@ -352,19 +350,17 @@ class LinearFunctionPointSlope:
                             stroke_opacity=_get_param_value(stroke_opacity))
 
             func = self.get_function()
-            x_min, x_max = x_range
+            x_min, x_max = x_range if x_range is not None else (axes.x_range[0], axes.x_range[1])
             
-            # 如果有y_range限制，需要调整x_range
-            if y_range is not None:
-                y_min, y_max = y_range
-                try:
-                    # 计算在y_range限制下的实际x范围
-                    func_x_range = self.get_range(y_min, y_max)
-                    if not (math.isnan(func_x_range[0]) or math.isnan(func_x_range[1])):
-                        x_min = max(x_min, func_x_range[0])
-                        x_max = min(x_max, func_x_range[1])
-                except:
-                    pass
+            y_min, y_max = y_range if y_range is not None else (axes.y_range[0], axes.y_range[1])
+            try:
+                # 计算在y_range限制下的实际x范围
+                func_x_range = self.get_range(y_min, y_max)
+                if not (math.isnan(func_x_range[0]) or math.isnan(func_x_range[1])):
+                    x_min = max(x_min, func_x_range[0])
+                    x_max = min(x_max, func_x_range[1])
+            except:
+                pass
             
             # 创建受限制的函数
             def limited_func(x):
