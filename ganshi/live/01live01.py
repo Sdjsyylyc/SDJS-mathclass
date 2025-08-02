@@ -145,7 +145,7 @@ class OmegaIllusion(MovingCameraScene):
             0,
             4.
         ).to_corner(UR, buff=0.5)
-        sin_scale_graph = always_redraw(lambda: axes.plot(lambda x: r_tracker.get_value()*np.sin(omega_tracker.get_value()*x+phi_tracker.get_value()), [0, 2*PI]))
+        sin_scale_graph = always_redraw(lambda: axes.plot(lambda x: r_tracker.get_value()*np.sin(omega_tracker.get_value()*x+phi_tracker.get_value()), [0, 2*PI], color=GREEN))
         self.play(FadeOut(fixed_sin1_graph), FadeOut(fixed_sin2_graph), FadeOut(fixed_sin3_graph), Create(omega_slider), FadeIn(sin_scale_graph))
         self.wait(2)
         self.play(omega_tracker.animate.set_value(3), run_time=6)
