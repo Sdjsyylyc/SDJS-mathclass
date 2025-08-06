@@ -7,7 +7,7 @@
 
 import numpy as np
 import math
-from manim import ValueTracker, VMobject, WHITE, ParametricFunction, FunctionGraph, Dot, Line, DashedLine
+from manim import ValueTracker, VMobject, WHITE, ParametricFunction, FunctionGraph, Dot, Line, DashedLine, VGroup
 
 
 class LinearFunctionTwoPoints:
@@ -1018,11 +1018,11 @@ class Ellipse:
     def get_foci_dots(self, axes, color=WHITE, radius=0.05):
         """获取焦点的Dot对象"""
         foci = self.get_foci_coordinates()
-        dots = []
+        dots = VGroup()
         for focus in foci:
             dot = Dot(axes.coords_to_point(focus[0], focus[1]), 
                      color=color, radius=radius)
-            dots.append(dot)
+            dots.add(dot)
         return dots
     
     def get_directrix_equations(self):
