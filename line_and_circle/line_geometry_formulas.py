@@ -33,10 +33,10 @@ class LineGeometryFormulas(Scene):
         y2_tracker = ValueTracker(1.5)
         
         # 滑块
-        x1_slider = SliderComponent("x_1", x1_tracker, -3, 3, [4.2, 2.8, 0])
-        y1_slider = SliderComponent("y_1", y1_tracker, -2, 2, [4.2, 2.4, 0])
-        x2_slider = SliderComponent("x_2", x2_tracker, -3, 3, [4.2, 2.0, 0])
-        y2_slider = SliderComponent("y_2", y2_tracker, -2, 2, [4.2, 1.6, 0])
+        x1_slider = SliderComponent("x_1", x1_tracker, -3, 3, position=[4.2, 2.8, 0])
+        y1_slider = SliderComponent("y_1", y1_tracker, -2, 2, position=[4.2, 2.4, 0])
+        x2_slider = SliderComponent("x_2", x2_tracker, -3, 3, position=[4.2, 2.0, 0])
+        y2_slider = SliderComponent("y_2", y2_tracker, -2, 2, position=[4.2, 1.6, 0])
         self.play(Create(x1_slider), Create(y1_slider), Create(x2_slider), Create(y2_slider))
         
         # 两个点
@@ -228,11 +228,11 @@ class LineGeometryFormulas(Scene):
         py_tracker = ValueTracker(1.5)
         
         # 滑块
-        A_slider = SliderComponent("A", A_tracker, 0.5, 2, [4.0, 2.8, 0])
-        B_slider = SliderComponent("B", B_tracker, 0.5, 2, [4.0, 2.4, 0])
-        C_slider = SliderComponent("C", C_tracker, -2, 2, [4.0, 2.0, 0])
-        px_slider = SliderComponent("P_x", px_tracker, -3, 3, [4.0, 1.6, 0])
-        py_slider = SliderComponent("P_y", py_tracker, -2, 2, [4.0, 1.2, 0])
+        A_slider = SliderComponent("A", A_tracker, 0.5, 2, position=[4.0, 2.8, 0])
+        B_slider = SliderComponent("B", B_tracker, 0.5, 2, position=[4.0, 2.4, 0])
+        C_slider = SliderComponent("C", C_tracker, -2, 2, position=[4.0, 2.0, 0])
+        px_slider = SliderComponent("P_x", px_tracker, -3, 3, position=[4.0, 1.6, 0])
+        py_slider = SliderComponent("P_y", py_tracker, -2, 2, position=[4.0, 1.2, 0])
         
         self.play(Create(A_slider), Create(B_slider), Create(C_slider), 
                   Create(px_slider), Create(py_slider))
@@ -337,10 +337,10 @@ class LineGeometryFormulas(Scene):
         C2_tracker = ValueTracker(1)
         
         # 滑块
-        A_slider = SliderComponent("A", A_tracker, 0.5, 2, [4.0, 2.6, 0])
-        B_slider = SliderComponent("B", B_tracker, 0.5, 2, [4.0, 2.2, 0])
-        C1_slider = SliderComponent("C_1", C1_tracker, -2, 2, [4.0, 1.8, 0])
-        C2_slider = SliderComponent("C_2", C2_tracker, -2, 2, [4.0, 1.4, 0])
+        A_slider = SliderComponent("A", A_tracker, 0.5, 2, position=[4.0, 2.6, 0])
+        B_slider = SliderComponent("B", B_tracker, 0.5, 2, position=[4.0, 2.2, 0])
+        C1_slider = SliderComponent("C_1", C1_tracker, -2, 2, position=[4.0, 1.8, 0])
+        C2_slider = SliderComponent("C_2", C2_tracker, -2, 2, position=[4.0, 1.4, 0])
         
         self.play(Create(A_slider), Create(B_slider), Create(C1_slider), Create(C2_slider))
         
@@ -408,8 +408,8 @@ class LineGeometryFormulas(Scene):
         k2_tracker = ValueTracker(-0.5)
         
         # 滑块
-        k1_slider = SliderComponent("k_1", k1_tracker, -2, 2, [4.0, 2.6, 0])
-        k2_slider = SliderComponent("k_2", k2_tracker, -2, 2, [4.0, 2.2, 0])
+        k1_slider = SliderComponent("k_1", k1_tracker, -2, 2, position=[4.0, 2.6, 0])
+        k2_slider = SliderComponent("k_2", k2_tracker, -2, 2, position=[4.0, 2.2, 0])
         
         self.play(Create(k1_slider), Create(k2_slider))
         
@@ -509,11 +509,11 @@ class LineGeometryFormulas(Scene):
         py_tracker = ValueTracker(1.5)
         
         # 滑块
-        A_slider = SliderComponent("A", A_tracker, 0.5, 2, [4.0, 2.8, 0])
-        B_slider = SliderComponent("B", B_tracker, 0.5, 2, [4.0, 2.4, 0])
-        C_slider = SliderComponent("C", C_tracker, -2, 2, [4.0, 2.0, 0])
-        px_slider = SliderComponent("P_x", px_tracker, -3, 3, [4.0, 1.6, 0])
-        py_slider = SliderComponent("P_y", py_tracker, -2, 2, [4.0, 1.2, 0])
+        A_slider = SliderComponent("A", A_tracker, 0.5, 2, position=[4.0, 2.8, 0])
+        B_slider = SliderComponent("B", B_tracker, 0.5, 2, position=[4.0, 2.4, 0])
+        C_slider = SliderComponent("C", C_tracker, -2, 2, position=[4.0, 2.0, 0])
+        px_slider = SliderComponent("P_x", px_tracker, -3, 3, position=[4.0, 1.6, 0])
+        py_slider = SliderComponent("P_y", py_tracker, -2, 2, position=[4.0, 1.2, 0])
         
         self.play(Create(A_slider), Create(B_slider), Create(C_slider), 
                   Create(px_slider), Create(py_slider))

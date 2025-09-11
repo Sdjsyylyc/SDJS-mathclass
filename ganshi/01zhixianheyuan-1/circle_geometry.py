@@ -1,7 +1,8 @@
 from manim import *
-from modules.custom_axes import CustomAxes
-from modules.slider_component import SliderComponent
-from modules.function_definitions import *
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__))))))
+from modules import CustomAxes, SliderComponent, LinearFunctionPointSlope, CollisionEffect
 import numpy as np
 
 class ConicLocusAnimation(MovingCameraScene):

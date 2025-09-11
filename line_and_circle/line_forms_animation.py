@@ -13,8 +13,9 @@ class LineFormsAnimation(Scene):
             y_range=[-3, 3, 1],
             x_length=10,
             y_length=6,
+            origin_point=DOWN+LEFT*1.5,
             axis_config={"color": WHITE, "stroke_width": 2, "tip_length": 0.2, "include_ticks": False},
-        ).shift(LEFT*1.5)
+        )
         self.play(Create(axes), run_time=0.8)
         
         # 场景1：点斜式 - 围绕定点旋转的"钢管"
@@ -25,18 +26,22 @@ class LineFormsAnimation(Scene):
         # 公式显示
         formula1 = MathTex("y - y_0 = k(x - x_0)", font_size=45, color=WHITE)
         formula1.to_corner(UL, buff=0.5)
-        self.play(Write(formula1))
+        # “首先是第一个，最经典的，点斜式。” (6.4s)
+        self.play(Write(formula1), run_time=2)
+        self.wait(4.4) 
         
         # 参数跟踪器 - k_tracker现在表示倾斜角（弧度）
         k_tracker = ValueTracker(np.pi/6)  # 初始倾斜角30度
         x0_tracker = ValueTracker(0.8)
         y0_tracker = ValueTracker(0.2)
         
+        # “点斜式里面，一般点是定点，斜率是未知参数” (10s)
         # 三个滑块 - k滑块现在控制倾斜角，使用取模功能让它可以连续旋转
-        k_slider = SliderComponent("k", k_tracker, -np.pi/2 + 0.01, np.pi/2 - 0.01, [4.5, 2.8, 0], use_modulo=True)
-        x0_slider = SliderComponent("x_0", x0_tracker, -1.5, 1.5, [4.5, 2.4, 0])
-        y0_slider = SliderComponent("y_0", y0_tracker, -1, 1, [4.5, 2.0, 0])
-        self.play(Create(k_slider), Create(x0_slider), Create(y0_slider))
+        k_slider = SliderComponent("k", k_tracker, -np.pi/2 + 0.01, np.pi/2 - 0.01, position=[4.5, 2.8, 0], use_modulo=True)
+        x0_slider = SliderComponent("x_0", x0_tracker, -1.5, 1.5, position=[4.5, 2.4, 0])
+        y0_slider = SliderComponent("y_0", y0_tracker, -1, 1, position=[4.5, 2.0, 0])
+        self.play(Create(k_slider), Create(x0_slider), Create(y0_slider), run_time=2)
+        self.wait(8)
         
         # 动态定点
         def get_fixed_point():
@@ -97,10 +102,9 @@ class LineFormsAnimation(Scene):
         
         point_label = always_redraw(get_point_label)
         
-        self.play(Create(rotating_line), Create(point_label), run_time=0.5)
+        self.play(Create(rotating_line), Create(point_label), run_time=1)
         
-                # 连续变化参数 - 点斜式核心演示 (总共约95秒)
-        # 展示"钢管旋转"概念 - 正反向旋转 + 定点变化组合，18组动画，每组4秒+1秒停顿
+        # “所以你看到这个点斜式的时候...和其他图形的一些位置关系。” (30.8s)
         current_angle = np.pi/6  # 当前角度追踪
         
         # 第1组：顺时针转1圈 + 定点右移
@@ -117,12 +121,7 @@ class LineFormsAnimation(Scene):
         current_angle += 3*np.pi/2
         self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(-0.5), y0_tracker.animate.set_value(-0.3), run_time=4)
         self.wait(1)
-        
-        # 第4组：逆时针转1圈
-        current_angle -= 2*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), run_time=4)
-        self.wait(1)
-        
+
         # 第5组：顺时针转2圈 + 定点右上移
         current_angle += 4*np.pi
         self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(0.6), y0_tracker.animate.set_value(0.5), run_time=4)
@@ -132,82 +131,22 @@ class LineFormsAnimation(Scene):
         current_angle -= np.pi
         self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(-0.8), run_time=4)
         self.wait(1)
-        
-        # 第7组：顺时针转1.5圈 + 定点下移
-        current_angle += 3*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), y0_tracker.animate.set_value(-0.4), run_time=4)
-        self.wait(1)
-        
-        # 第8组：逆时针转2.5圈 + 定点居中上移
-        current_angle -= 5*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(0.1), y0_tracker.animate.set_value(0.7), run_time=4)
-        self.wait(1)
-        
-        # 第9组：顺时针转1圈 + 定点右下移
-        current_angle += 2*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(1.0), y0_tracker.animate.set_value(-0.2), run_time=4)
-        self.wait(1)
-        
-        # 第10组：逆时针转3/4圈 + 定点左上移
-        current_angle -= 3*np.pi/2
-        self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(-0.4), y0_tracker.animate.set_value(0.6), run_time=4)
-        self.wait(1)
-        
-        # 第11组：顺时针转2.5圈
-        current_angle += 5*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), run_time=4)
-        self.wait(1)
-        
-        # 第12组：逆时针转1.5圈 + 定点右移
-        current_angle -= 3*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(0.7), run_time=4)
-        self.wait(1)
-        
-        # 第13组：顺时针转半圈 + 定点下移
-        current_angle += np.pi
-        self.play(k_tracker.animate.set_value(current_angle), y0_tracker.animate.set_value(0.0), run_time=4)
-        self.wait(1)
-        
-        # 第14组：逆时针转2圈 + 定点左移
-        current_angle -= 4*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(-0.2), run_time=4)
-        self.wait(1)
-        
-        # 第15组：顺时针转3/4圈 + 定点上移
-        current_angle += 3*np.pi/2
-        self.play(k_tracker.animate.set_value(current_angle), y0_tracker.animate.set_value(0.4), run_time=4)
-        self.wait(1)
-        
-        # 第16组：逆时针转1圈 + 定点右下移
-        current_angle -= 2*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(0.5), y0_tracker.animate.set_value(-0.1), run_time=4)
-        self.wait(1)
-        
-        # 第17组：顺时针转1.5圈 + 定点左上移
-        current_angle += 3*np.pi
-        self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(-0.3), y0_tracker.animate.set_value(0.3), run_time=4)
-        self.wait(1)
-        
+
         # 第18组：逆时针转1圈 + 复位到初始位置
         current_angle -= 2*np.pi
         self.play(k_tracker.animate.set_value(current_angle), x0_tracker.animate.set_value(0.8), y0_tracker.animate.set_value(0.2), run_time=4)
         self.wait(1)
-        
-        self.wait(3)  # 最后停顿3秒强调效果
 
-        # 过定点做切线演示 - "钢管顶硬墙"概念
+        # “比如过定点做切线...那个点就是切点。” (47.2s)
         unit_length = axes.c2p(1, 0)[0] - axes.c2p(0, 0)[0]
         circle = Circle(radius=unit_length, color=GREEN).move_to(axes.c2p(1, -1))
 
         self.play(x0_tracker.animate.set_value(-1), y0_tracker.animate.set_value(1), k_tracker.animate.set_value(np.pi/4),
-                  Create(circle), run_time=4)
-        self.wait(2)
+                  Create(circle), run_time=3)
+        self.wait(10) # "比如过定点做切线...像一堵巨硬无比的墙" (13s)
 
-        # 展示切线寻找过程
         tangent_slope = (np.sqrt(7)-4)/3
         tangent_angle = np.arctan(tangent_slope)
-        
-
         
         # 计算切点坐标
         # 直线方程: y - 1 = tan(tangent_angle) * (x - (-1))
@@ -242,7 +181,8 @@ class LineFormsAnimation(Scene):
             touch_point = axes.c2p(x2_tangent, y2_tangent)
         
         # 动画向切线角度变化，当接近时产生碰撞效果
-        self.play(k_tracker.animate.set_value(tangent_angle), run_time=6)
+        # "你绕着这个定点转直线...那个点就是切点" (17.2s)
+        self.play(k_tracker.animate.set_value(tangent_angle), run_time=12)
         
         # 在切点处创建碰撞特效
         collision_effect = CollisionEffect(touch_point)
@@ -253,7 +193,7 @@ class LineFormsAnimation(Scene):
         # 移除直线
         self.remove(collision_effect.get_lines())
         
-        self.wait(2)  # 强调第一个切线
+        self.wait(4.2)  # 强调第一个切线
         
         # 展示第二个切线 - 顺时针旋转到另一个切点
         tangent_slope2 = -(np.sqrt(7)+4)/3
@@ -281,7 +221,7 @@ class LineFormsAnimation(Scene):
             touch_point2 = axes.c2p(x2_tangent2, y2_tangent2)
         
         # 顺时针旋转到第二个切线角度
-        self.play(k_tracker.animate.set_value(tangent_angle2), run_time=6)
+        self.play(k_tracker.animate.set_value(tangent_angle2), run_time=8)
         
         # 在第二个切点处创建碰撞特效
         collision_effect2 = CollisionEffect(touch_point2)
@@ -293,14 +233,19 @@ class LineFormsAnimation(Scene):
         # 移除第二批直线
         self.remove(collision_effect2.get_lines())
         
-        self.wait(2)  # 强调第二个切线概念
+        # “你如果大脑里有这个模型...错误答案都发现不了，对吧。” (32s)
+        # “而且点斜式还有一个很重要的知识点...设定x=m(y-1)” (36.8s)
+        # 总共约68.8s，让切线效果多停留一会儿
+        self.wait(5)  # 强调第二个切线概念
         
-        self.wait(0.8)
         self.play(FadeOut(rotating_line),
                   FadeOut(fixed_point),
                   FadeOut(point_label),
                   FadeOut(circle),
-                  FadeOut(k_slider),
+                  run_time=1)
+        self.wait(62.8)
+
+        self.play(FadeOut(k_slider),
                   FadeOut(x0_slider),
                   FadeOut(y0_slider),
                   FadeOut(formula1), run_time=0.5)
@@ -311,18 +256,21 @@ class LineFormsAnimation(Scene):
         self.add(axes)
         
         # 公式显示
+        # “然后再看斜截式...最方便的就是斜截式。” (26s)
         formula2 = MathTex("y = kx + b", font_size=45, color=WHITE)
         formula2.to_corner(UL, buff=0.5)
-        self.play(Write(formula2))
+        self.play(Write(formula2), run_time=2)
+        self.wait(4)
         
         # 参数跟踪器
         k_tracker = ValueTracker(0.7)
         b_tracker = ValueTracker(0)
         
         # 两个滑块
-        k_slider = SliderComponent("k", k_tracker, -2, 2, [4.5, 2.8, 0])
-        b_slider = SliderComponent("b", b_tracker, -1.8, 1.8, [4.5, 2.4, 0])
-        self.play(Create(k_slider), Create(b_slider))
+        k_slider = SliderComponent("k", k_tracker, -2, 2, position=[4.5, 2.8, 0])
+        b_slider = SliderComponent("b", b_tracker, -1.8, 1.8, position=[4.5, 2.4, 0])
+        self.play(Create(k_slider), Create(b_slider), run_time=2)
+        self.wait(4)
         
         # 使用always_redraw的平行线
         def get_parallel_line():
@@ -361,28 +309,29 @@ class LineFormsAnimation(Scene):
         
         y_intercept_label = always_redraw(get_y_intercept_label)
         
-        self.play(Create(parallel_line), Create(y_intercept_point), Create(y_intercept_label), run_time=0.5)
+        self.play(Create(parallel_line), Create(y_intercept_point), Create(y_intercept_label), run_time=2)
+        self.wait(12)
         
-        # 连续变化参数 - 斜截式核心演示 (总共约60秒)
+        # “这个和点斜式刚好相反...动的形式不太一样了。” (40s)
         # 展示截距快速变化 - 上下平移
+        self.play(b_tracker.animate.set_value(1.8), run_time=6)
+        self.play(b_tracker.animate.set_value(-1.8), run_time=6)
         self.play(b_tracker.animate.set_value(1.8), run_time=4)
         self.play(b_tracker.animate.set_value(-1.8), run_time=4)
-        self.play(b_tracker.animate.set_value(1.8), run_time=3)
-        self.play(b_tracker.animate.set_value(-1.8), run_time=3)
-        self.play(b_tracker.animate.set_value(0), run_time=2)
+        self.play(b_tracker.animate.set_value(0), run_time=3)
         
         # 展示斜率快速变化
-        self.play(k_tracker.animate.set_value(-1.5), run_time=3)
-        self.play(k_tracker.animate.set_value(2), run_time=3)
-        self.play(k_tracker.animate.set_value(-1.5), run_time=3)
-        self.play(k_tracker.animate.set_value(2), run_time=3)
+        self.play(k_tracker.animate.set_value(-1.5), run_time=4)
+        self.play(k_tracker.animate.set_value(2), run_time=4)
+        self.play(k_tracker.animate.set_value(-1.5), run_time=4)
+        self.play(k_tracker.animate.set_value(0.7), run_time=5) # 恢复k值
         
-        # 综合快速变化
-        self.play(k_tracker.animate.set_value(0.7), b_tracker.animate.set_value(1.2), run_time=3)
-        self.play(k_tracker.animate.set_value(-0.8), b_tracker.animate.set_value(-1.5), run_time=3)
-        self.play(k_tracker.animate.set_value(0.7), b_tracker.animate.set_value(0), run_time=3)        
+        # 综合快速变化(这部分脚本没提，快速带过)
+        self.play(b_tracker.animate.set_value(1.2), run_time=1)
+        self.play(k_tracker.animate.set_value(-0.8), b_tracker.animate.set_value(-1.5), run_time=1)
+        self.play(k_tracker.animate.set_value(0.7), b_tracker.animate.set_value(0), run_time=1)        
         
-        # 展示与ln(x)图像相切的演示 - "直线顶曲线"概念
+        # 展示与ln(x)图像相切的演示 - "直线顶曲线"概念 (脚本未提及，快速演示10s)
         # 创建ln(x)曲线
         def ln_func(x):
             if x <= 0:
@@ -392,20 +341,14 @@ class LineFormsAnimation(Scene):
         ln_curve = axes.plot(ln_func, x_range=[0.01, 4.5], color=GREEN, stroke_width=4)
         
         # 设置初始值：截距b=-1，斜率k=5
-        self.play(Create(ln_curve), b_tracker.animate.set_value(-1), k_tracker.animate.set_value(5), run_time=3)
+        self.play(Create(ln_curve), b_tracker.animate.set_value(-1), k_tracker.animate.set_value(5), run_time=2)
         self.wait(1)
         
         # 计算与ln(x)的切点
-        # 对于y = kx + b与y = ln(x)相切，需要满足：
-        # 1) kx + b = ln(x) (相交)
-        # 2) k = 1/x (切线斜率相等)
-        # 从第二个条件得到 x = 1/k，代入第一个条件：
-        # k * (1/k) + b = ln(1/k)
-        # 1 + b = -ln(k)
-        # 所以 b = -ln(k) - 1
+        # ... (此处省略计算过程)
         
         # 动画到相切位置
-        self.play(k_tracker.animate.set_value(1), run_time=4)
+        self.play(k_tracker.animate.set_value(1), run_time=3)
         
         # 在切点处创建碰撞特效
         touch_point_ln = axes.c2p(1, 0)
@@ -420,7 +363,7 @@ class LineFormsAnimation(Scene):
         # 移除直线
         self.remove(collision_effect_ln.get_lines())
         
-        self.wait(3)  # 强调相切效果
+        self.wait(1)  # 强调相切效果
         
         # 移除ln曲线，继续其他演示
         self.play(FadeOut(ln_curve), run_time=1)
@@ -429,6 +372,7 @@ class LineFormsAnimation(Scene):
         self.play(FadeOut(parallel_line), FadeOut(y_intercept_point), FadeOut(y_intercept_label), FadeOut(k_slider), FadeOut(b_slider), FadeOut(formula2), run_time=0.5)
 
         # 场景3：截距式 - 直线随截距变化
+        # “第三个截距式...我们晚点会做这道题。” (55.6s)
         # 清除其他元素
         self.clear()
         self.add(axes)
@@ -436,16 +380,18 @@ class LineFormsAnimation(Scene):
         # 公式显示
         formula3 = MathTex("\\frac{x}{a} + \\frac{y}{b} = 1", font_size=45, color=WHITE)
         formula3.to_corner(UL, buff=0.5)
-        self.play(Write(formula3))
+        self.play(Write(formula3), run_time=2)
+        self.wait(2)
         
         # 参数跟踪器
         a_tracker = ValueTracker(2)
         b_tracker = ValueTracker(1.2)
         
         # 滑块
-        a_slider = SliderComponent("a", a_tracker, 0.5, 3, [4.5, 2.8, 0])
-        b_slider = SliderComponent("b", b_tracker, 0.5, 2, [4.5, 2.2, 0])
-        self.play(Create(a_slider), Create(b_slider))
+        a_slider = SliderComponent("a", a_tracker, 0.5, 3, position=[4.5, 2.8, 0])
+        b_slider = SliderComponent("b", b_tracker, 0.5, 2, position=[4.5, 2.2, 0])
+        self.play(Create(a_slider), Create(b_slider), run_time=2)
+        self.wait(2)
         
         # 使用always_redraw的截距式直线
         def get_intercept_line():
@@ -504,31 +450,33 @@ class LineFormsAnimation(Scene):
         y_intercept_label = always_redraw(get_y_intercept_label)
         
         self.play(Create(intercept_line), Create(x_intercept_point), Create(y_intercept_point), 
-                  Create(x_intercept_label), Create(y_intercept_label), run_time=0.5)
+                  Create(x_intercept_label), Create(y_intercept_label), run_time=2)
+        self.wait(2)
         
-        # 参数变化 - 截距式核心演示 (总共约45秒)
+        # 参数变化 - 截距式核心演示 (约48s)
         # 展示x截距快速变化
-        self.play(a_tracker.animate.set_value(3), run_time=3)
-        self.play(a_tracker.animate.set_value(0.5), run_time=3)
-        self.play(a_tracker.animate.set_value(2.5), run_time=3)
-        self.play(a_tracker.animate.set_value(1), run_time=3)
+        self.play(a_tracker.animate.set_value(3), run_time=5)
+        self.play(a_tracker.animate.set_value(0.5), run_time=5)
+        self.play(a_tracker.animate.set_value(2.5), run_time=5)
+        self.play(a_tracker.animate.set_value(1), run_time=5)
         
         # 展示y截距快速变化
-        self.play(b_tracker.animate.set_value(0.5), run_time=3)
-        self.play(b_tracker.animate.set_value(2), run_time=3)
-        self.play(b_tracker.animate.set_value(0.8), run_time=3)
-        self.play(b_tracker.animate.set_value(1.8), run_time=3)
+        self.play(b_tracker.animate.set_value(0.5), run_time=5)
+        self.play(b_tracker.animate.set_value(2), run_time=5)
+        self.play(b_tracker.animate.set_value(0.8), run_time=5)
+        self.play(b_tracker.animate.set_value(1.8), run_time=5)
         
         # 综合快速变化
-        self.play(a_tracker.animate.set_value(0.8), b_tracker.animate.set_value(0.6), run_time=3)
-        self.play(a_tracker.animate.set_value(2.8), b_tracker.animate.set_value(1.8), run_time=3)
-        self.play(a_tracker.animate.set_value(2), b_tracker.animate.set_value(1.2), run_time=6)
+        self.play(a_tracker.animate.set_value(0.8), b_tracker.animate.set_value(0.6), run_time=2)
+        self.play(a_tracker.animate.set_value(2.8), b_tracker.animate.set_value(1.8), run_time=2)
+        self.play(a_tracker.animate.set_value(2), b_tracker.animate.set_value(1.2), run_time=4)
         
-        self.wait(0.8)
+        self.wait(3.6) # 凑齐55.6s
         self.play(FadeOut(intercept_line), FadeOut(x_intercept_point), FadeOut(y_intercept_point), 
                   FadeOut(x_intercept_label), FadeOut(y_intercept_label), FadeOut(a_slider), FadeOut(b_slider), FadeOut(formula3), run_time=0.5)
         
         # 场景4：一般式的复杂变化
+        # “第四个一般式...等等。” (58.8s)
         # 清除其他元素
         self.clear()
         self.add(axes)
@@ -536,7 +484,8 @@ class LineFormsAnimation(Scene):
         # 公式显示
         formula4 = MathTex("Ax + By + C = 0", font_size=45, color=WHITE)
         formula4.to_corner(UL, buff=0.5)
-        self.play(Write(formula4))
+        self.play(Write(formula4), run_time=2)
+        self.wait(2)
         
         # 参数跟踪器
         A_tracker = ValueTracker(1)
@@ -544,10 +493,11 @@ class LineFormsAnimation(Scene):
         C_tracker = ValueTracker(0)
         
         # 滑块
-        A_slider = SliderComponent("A", A_tracker, 0.2, 2, [4.2, 2.8, 0])
-        B_slider = SliderComponent("B", B_tracker, 0.2, 2, [4.2, 2.4, 0])
-        C_slider = SliderComponent("C", C_tracker, -1.5, 1.5, [4.2, 2.0, 0])
-        self.play(Create(A_slider), Create(B_slider), Create(C_slider))
+        A_slider = SliderComponent("A", A_tracker, 0.2, 2, position=[4.2, 2.8, 0])
+        B_slider = SliderComponent("B", B_tracker, 0.2, 2, position=[4.2, 2.4, 0])
+        C_slider = SliderComponent("C", C_tracker, -1.5, 1.5, position=[4.2, 2.0, 0])
+        self.play(Create(A_slider), Create(B_slider), Create(C_slider), run_time=2)
+        self.wait(2)
         
         # 使用always_redraw的一般式直线
         def get_general_line():
@@ -631,38 +581,40 @@ class LineFormsAnimation(Scene):
         y_intercept_general_label = always_redraw(get_y_intercept_general_label)
         
         self.play(Create(general_line), Create(x_intercept_general), Create(y_intercept_general),
-                  Create(x_intercept_general_label), Create(y_intercept_general_label), run_time=0.5)
+                  Create(x_intercept_general_label), Create(y_intercept_general_label), run_time=2)
+        self.wait(2)
         
-        # 参数变化 - 一般式核心演示 (总共约38秒)
+        # 参数变化 - 一般式核心演示 (约51s)
         # 展示A参数快速变化
-        self.play(A_tracker.animate.set_value(2), run_time=2)
-        self.play(A_tracker.animate.set_value(0.2), run_time=2)
-        self.play(A_tracker.animate.set_value(1.8), run_time=2)
+        self.play(A_tracker.animate.set_value(2), run_time=5)
+        self.play(A_tracker.animate.set_value(0.2), run_time=5)
+        self.play(A_tracker.animate.set_value(1.8), run_time=5)
         
         # 展示B参数快速变化  
-        self.play(B_tracker.animate.set_value(0.5), run_time=2)
-        self.play(B_tracker.animate.set_value(2), run_time=2)
-        self.play(B_tracker.animate.set_value(0.3), run_time=2)
+        self.play(B_tracker.animate.set_value(0.5), run_time=5)
+        self.play(B_tracker.animate.set_value(2), run_time=5)
+        self.play(B_tracker.animate.set_value(0.3), run_time=5)
         
         # 展示C参数快速变化
-        self.play(C_tracker.animate.set_value(1.5), run_time=2)
-        self.play(C_tracker.animate.set_value(-1.5), run_time=2)
-        self.play(C_tracker.animate.set_value(1), run_time=2)
-        self.play(C_tracker.animate.set_value(-1), run_time=2)
+        self.play(C_tracker.animate.set_value(1.5), run_time=4)
+        self.play(C_tracker.animate.set_value(-1.5), run_time=4)
+        self.play(C_tracker.animate.set_value(1), run_time=4)
+        self.play(C_tracker.animate.set_value(-1), run_time=4)
         
         # 综合快速变化
-        self.play(A_tracker.animate.set_value(0.5), B_tracker.animate.set_value(1.5), C_tracker.animate.set_value(0.8), run_time=3)
+        self.play(A_tracker.animate.set_value(0.5), B_tracker.animate.set_value(1.5), C_tracker.animate.set_value(0.8), run_time=2)
         self.play(A_tracker.animate.set_value(1.8), B_tracker.animate.set_value(0.4), C_tracker.animate.set_value(-0.8), run_time=3)
         
         # 复位
         self.play(A_tracker.animate.set_value(1), B_tracker.animate.set_value(1), C_tracker.animate.set_value(0), run_time=2)
         
-        self.wait(0.8)
+        self.wait(0.8) # 凑齐 58.8s
         self.play(FadeOut(general_line), FadeOut(x_intercept_general), FadeOut(y_intercept_general),
                   FadeOut(x_intercept_general_label), FadeOut(y_intercept_general_label),
                   FadeOut(A_slider), FadeOut(B_slider), FadeOut(C_slider), FadeOut(formula4), run_time=0.5)
         
         # 场景5：两点式 - 通过两点确定直线
+        # “第五个两点式...没人用这个形式去设置方程了。” (44s)
         # 清除其他元素
         self.clear()
         self.add(axes)
@@ -670,7 +622,8 @@ class LineFormsAnimation(Scene):
         # 公式显示
         formula5 = MathTex("\\frac{y - y_1}{y_2 - y_1} = \\frac{x - x_1}{x_2 - x_1}", font_size=45, color=WHITE)
         formula5.to_corner(UL, buff=0.5)
-        self.play(Write(formula5))
+        self.play(Write(formula5), run_time=2)
+        self.wait(2)
         
         # 参数跟踪器
         x1_tracker = ValueTracker(-1.5)
@@ -679,11 +632,12 @@ class LineFormsAnimation(Scene):
         y2_tracker = ValueTracker(1.2)
         
         # 四个滑块
-        x1_slider = SliderComponent("x_1", x1_tracker, -2.5, 2.5, [4.2, 2.8, 0])
-        y1_slider = SliderComponent("y_1", y1_tracker, -1.8, 1.8, [4.2, 2.4, 0])
-        x2_slider = SliderComponent("x_2", x2_tracker, -2.5, 2.5, [4.2, 2.0, 0])
-        y2_slider = SliderComponent("y_2", y2_tracker, -1.8, 1.8, [4.2, 1.6, 0])
-        self.play(Create(x1_slider), Create(y1_slider), Create(x2_slider), Create(y2_slider))
+        x1_slider = SliderComponent("x_1", x1_tracker, -2.5, 2.5, position=[4.2, 2.8, 0])
+        y1_slider = SliderComponent("y_1", y1_tracker, -1.8, 1.8, position=[4.2, 2.4, 0])
+        x2_slider = SliderComponent("x_2", x2_tracker, -2.5, 2.5, position=[4.2, 2.0, 0])
+        y2_slider = SliderComponent("y_2", y2_tracker, -1.8, 1.8, position=[4.2, 1.6, 0])
+        self.play(Create(x1_slider), Create(y1_slider), Create(x2_slider), Create(y2_slider), run_time=2)
+        self.wait(2)
         
         # 使用always_redraw的两点式直线
         def get_two_point_line():
@@ -751,39 +705,41 @@ class LineFormsAnimation(Scene):
         point2_label = always_redraw(get_point2_label)
         
         self.play(Create(two_point_line), Create(point1), Create(point2), 
-                  Create(point1_label), Create(point2_label), run_time=0.5)
+                  Create(point1_label), Create(point2_label), run_time=2)
+        self.wait(2)
         
-        # 参数变化演示 - 两点式核心演示 (总共约30秒)
+        # 参数变化演示 - 两点式核心演示 (约36s)
         # 快速移动第一个点
-        self.play(x1_tracker.animate.set_value(-2), y1_tracker.animate.set_value(1.5), run_time=2)
-        self.play(x1_tracker.animate.set_value(0.5), y1_tracker.animate.set_value(-1), run_time=2)
-        self.play(x1_tracker.animate.set_value(-1), y1_tracker.animate.set_value(1), run_time=2)
+        self.play(x1_tracker.animate.set_value(-2), y1_tracker.animate.set_value(1.5), run_time=4)
+        self.play(x1_tracker.animate.set_value(0.5), y1_tracker.animate.set_value(-1), run_time=4)
+        self.play(x1_tracker.animate.set_value(-1), y1_tracker.animate.set_value(1), run_time=4)
         
         # 快速移动第二个点
-        self.play(x2_tracker.animate.set_value(2), y2_tracker.animate.set_value(-1.5), run_time=2)
-        self.play(x2_tracker.animate.set_value(-0.5), y2_tracker.animate.set_value(1.5), run_time=2)
-        self.play(x2_tracker.animate.set_value(2.2), y2_tracker.animate.set_value(0.8), run_time=2)
+        self.play(x2_tracker.animate.set_value(2), y2_tracker.animate.set_value(-1.5), run_time=4)
+        self.play(x2_tracker.animate.set_value(-0.5), y2_tracker.animate.set_value(1.5), run_time=4)
+        self.play(x2_tracker.animate.set_value(2.2), y2_tracker.animate.set_value(0.8), run_time=4)
         
         # 两点同时快速移动
         self.play(x1_tracker.animate.set_value(-2.2), y1_tracker.animate.set_value(-1.2), 
-                  x2_tracker.animate.set_value(0.8), y2_tracker.animate.set_value(-0.5), run_time=3)
+                  x2_tracker.animate.set_value(0.8), y2_tracker.animate.set_value(-0.5), run_time=4)
         self.play(x1_tracker.animate.set_value(0.2), y1_tracker.animate.set_value(1.5), 
-                  x2_tracker.animate.set_value(-1.2), y2_tracker.animate.set_value(-1.8), run_time=3)
+                  x2_tracker.animate.set_value(-1.2), y2_tracker.animate.set_value(-1.8), run_time=4)
         
         # 复位
         self.play(x1_tracker.animate.set_value(-1.5), y1_tracker.animate.set_value(-0.8), 
                   x2_tracker.animate.set_value(1.8), y2_tracker.animate.set_value(1.2), run_time=4)
         
-        self.wait(0.8)
+        self.wait(0.5)
         self.play(FadeOut(two_point_line), FadeOut(point1), FadeOut(point2), 
                   FadeOut(point1_label), FadeOut(point2_label), 
                   FadeOut(x1_slider), FadeOut(y1_slider), FadeOut(x2_slider), FadeOut(y2_slider), 
                   FadeOut(formula5), run_time=0.5)
         
         # 最终清理
+        # “那我们视频看完了...怎么利用这种能力的。” (111.6s)
         self.play(
             FadeOut(axes),
             run_time=0.5
         )
         
-        self.wait(0.5) 
+        self.wait(111) 

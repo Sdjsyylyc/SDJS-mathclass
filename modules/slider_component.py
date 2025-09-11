@@ -7,7 +7,8 @@ class SliderComponent(VGroup):
                  value_tracker, 
                  min_val, 
                  max_val, 
-                 position,
+                 param_color=WHITE,
+                 position=ORIGIN,
                  track_color=WHITE, 
                  slider_color=WHITE,
                  use_modulo=True,  # 新增参数：是否使用取模功能
@@ -48,7 +49,7 @@ class SliderComponent(VGroup):
         self.slider.add_updater(update_slider_position)
         
         # 参数标签 - 使用MathTex
-        self.label = MathTex(param_name, font_size=28, color=WHITE)
+        self.label = MathTex(param_name, font_size=28, color=param_color)
         self.label.next_to(self.track, UP, buff=0.1)
         
         # 将所有组件添加到VGroup
