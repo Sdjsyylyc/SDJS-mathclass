@@ -831,6 +831,38 @@ class Ellipse:
         
         return parametric_func
     
+    def get_tangent_function(self):
+        """返回切线方程"""
+        def tangent_func(t, x):
+            a = self._get_param_value(self.a)
+            b = self._get_param_value(self.b)
+            x0 = a * math.cos(t)
+            y0 = b * math.sin(t)
+            if abs(a * math.sin(t)) > 0.001:
+                k = -b * math.cos(t) / (a * math.sin(t))
+            else:
+                k = float('inf')
+            y = y0 + k * (x - x0)
+            return y
+        return tangent_func
+    
+    def get_tangent_line(self, axes, t, color=WHITE, stroke_width=1, length=2):
+        """返回切线方程"""
+        a = self._get_param_value(self.a)
+        b = self._get_param_value(self.b)
+        x0 = a * math.cos(t)
+        y0 = b * math.sin(t)
+        r = length / 2
+        if abs(a * math.sin(t)) > 0.001:
+            k = -b * math.cos(t) / (a * math.sin(t))
+        else:
+            k = float('inf')
+        x1 = x0 + r / np.sqrt(1 + k**2)
+        y1 = y0 + r * k / np.sqrt(1 + k**2)
+        x2 = x0 - r / np.sqrt(1 + k**2)
+        y2 = y0 - r * k / np.sqrt(1 + k**2)
+        return Line(axes.coords_to_point(x1, y1), axes.coords_to_point(x2, y2), color=color, stroke_width=stroke_width)
+    
     def get_eccentricity(self):
         """获取离心率"""
         a = self._get_param_value(self.a)
