@@ -88,4 +88,6 @@ class Scene1Hyperbola(MovingCameraScene):
 
         self.wait(2)
 
+        self.camera.get_image().save("scene1_hyperbola.png")
+
 
