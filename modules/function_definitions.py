@@ -1320,24 +1320,44 @@ class Hyperbola:
             return param.get_value()
         return param
     
-    def get_parametric_function(self):
+    def get_parametric_function(self, direction='right'):
         """返回参数方程 (x(t), y(t))"""
-        def parametric_func(t):
-            a = self._get_param_value(self.a)
-            b = self._get_param_value(self.b)
-            
-            if self.orientation == 'horizontal':
-                # x²/a² - y²/b² = 1
-                # x = ±a*cosh(t), y = b*sinh(t)
-                x = a * math.cosh(t)
-                y = b * math.sinh(t)
-            else:  # 'vertical'
-                # y²/a² - x²/b² = 1
-                # x = b*sinh(t), y = ±a*cosh(t)
-                x = b * math.sinh(t)
-                y = a * math.cosh(t)
-            
-            return (x, y)
+        if direction == 'right':
+            def parametric_func(t):
+                a = self._get_param_value(self.a)
+                b = self._get_param_value(self.b)
+                
+                if self.orientation == 'horizontal':
+                    # x²/a² - y²/b² = 1
+                    # x = ±a*cosh(t), y = b*sinh(t)
+                    x = a * math.cosh(t)
+                    y = b * math.sinh(t)
+                else:  # 'vertical'
+                    # y²/a² - x²/b² = 1
+                    # x = b*sinh(t), y = ±a*cosh(t)
+                    x = b * math.sinh(t)
+                    y = a * math.cosh(t)
+                
+                return (x, y)
+        elif direction == 'left':
+            def parametric_func(t):
+                a = self._get_param_value(self.a)
+                b = self._get_param_value(self.b)
+                
+                if self.orientation == 'horizontal':
+                    # x²/a² - y²/b² = 1
+                    # x = ±a*cosh(t), y = b*sinh(t)
+                    x = a * math.cosh(t)
+                    y = b * math.sinh(t)
+                else:  # 'vertical'
+                    # y²/a² - x²/b² = 1
+                    # x = b*sinh(t), y = ±a*cosh(t)
+                    x = b * math.sinh(t)
+                    y = a * math.cosh(t)
+                
+                return (-x, -y)
+        else:
+            raise ValueError(f"Invalid direction: {direction}")
         
         return parametric_func
     

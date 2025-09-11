@@ -64,8 +64,8 @@ class Xiandaoke01(Scene):
         p0, r0, l0, s0 = get_right_phase_segments()
         temp_left_equal = Line(p0, s0, color=BLUE)
         temp_left_remainder = Line(s0, l0, color=ORANGE)
-        self.play(Create(temp_right_line), Create(temp_left_equal), run_time=0.4, rate_func=linear)
-        self.play(Create(temp_left_remainder), run_time=0.4, rate_func=linear)
+        self.play(Create(temp_right_line), Create(temp_left_equal), run_time=0.4)
+        self.play(Create(temp_left_remainder), run_time=0.4)
         # 再替换为动态跟随的 always_redraw 版本
         line_to_right = always_redraw(lambda: Line(moving_dot.get_center(), focus_right.get_center(), color=BLUE))
         left_yellow = always_redraw(lambda: Line(get_right_phase_segments()[0], get_right_phase_segments()[3], color=BLUE))
@@ -88,13 +88,13 @@ class Xiandaoke01(Scene):
         moving_dot.add_updater(update_on_right)
         self.add(traced_right_up)
         # 上半段：u 从 u_max 减小到 0
-        self.play(u_tracker.animate.set_value(0.0), run_time=2, rate_func=linear)
+        self.play(u_tracker.animate.set_value(0.0), run_time=2)
         # 冻结上半段轨迹，防止继续更新导致覆盖
         traced_right_up.clear_updaters()
         # 下半段：新建一个轨迹对象继续从 0 到 -u_max
         traced_right_down = TracedPath(moving_dot.get_center, stroke_color=ORANGE, stroke_width=4, dissipating_time=float('inf'))
         self.add(traced_right_down)
-        self.play(u_tracker.animate.set_value(-u_max), run_time=2, rate_func=linear)
+        self.play(u_tracker.animate.set_value(-u_max), run_time=2)
         moving_dot.remove_updater(update_on_right)
         # 右支结束后，动点与连线淡出（保留轨迹）
         self.play(FadeOut(VGroup(moving_dot, line_to_right, left_yellow, left_blue)), run_time=0.6)
@@ -127,8 +127,8 @@ class Xiandaoke01(Scene):
         temp_right_white = Line(q0, s1, color=BLUE)
         temp_right_blue = Line(s1, r1, color=ORANGE)
         # 等长两段同时出现，然后剩余部分（匀速）
-        self.play(Create(temp_left_line), Create(temp_right_white), run_time=0.4, rate_func=linear)
-        self.play(Create(temp_right_blue), run_time=0.4, rate_func=linear)
+        self.play(Create(temp_left_line), Create(temp_right_white), run_time=0.4)
+        self.play(Create(temp_right_blue), run_time=0.4)
         # 动态版本
         line_to_left_y = always_redraw(lambda: Line(moving_dot_left.get_center(), focus_left.get_center(), color=BLUE))
         right_yellow = always_redraw(lambda: Line(get_left_phase_segments()[0], get_left_phase_segments()[3], color=BLUE))
@@ -149,12 +149,12 @@ class Xiandaoke01(Scene):
         moving_dot_left.add_updater(update_on_left)
         self.add(traced_left_up)
         # 上半段：u 从 u_max 到 0
-        self.play(u_tracker.animate.set_value(0.0), run_time=2, rate_func=linear)
+        self.play(u_tracker.animate.set_value(0.0), run_time=2)
         traced_left_up.clear_updaters()
         # 下半段
         traced_left_down = TracedPath(moving_dot_left.get_center, stroke_color=ORANGE, stroke_width=4, dissipating_time=float('inf'))
         self.add(traced_left_down)
-        self.play(u_tracker.animate.set_value(-u_max), run_time=2, rate_func=linear)
+        self.play(u_tracker.animate.set_value(-u_max), run_time=2)
         moving_dot_left.remove_updater(update_on_left)
         # 左支结束后，动点与连线淡出（保留轨迹）
         self.play(FadeOut(VGroup(moving_dot_left, line_to_left_y, right_yellow, right_blue)), run_time=0.6)
