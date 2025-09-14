@@ -19,6 +19,7 @@ class Scene1Parabola(MovingCameraScene):
             y_range=[-4, 4, 1],
             x_length=8,
             y_length=8,
+            origin_point=LEFT,
             axis_config={"color": BLACK, "stroke_width": 2, "tip_length": 0.2},
         )
 
@@ -53,13 +54,14 @@ class Scene1Parabola(MovingCameraScene):
         line_width_tracker = ValueTracker(0)
         pf1_line = always_redraw(lambda: Line(p_dot.get_center(), focus_dot.get_center(), color=GRAY, stroke_width=4*line_width_tracker.get_value()))
         f2s_line = always_redraw(lambda: Line(p_dot.get_center(), np.array([directrix_line.get_center()[0], p_dot.get_center()[1], 0]), color=GRAY, stroke_width=6*line_width_tracker.get_value()))
-        self.add(pf1_line, f2s_line)
+        circle = always_redraw(lambda: Circle(radius=np.linalg.norm(focus_dot.get_center() - p_dot.get_center()), color=GRAY_A, stroke_width=2*line_width_tracker.get_value()).move_to(p_dot.get_center()))
+        self.add(pf1_line, f2s_line, circle)
         self.play(AnimationGroup(AnimationGroup(line_width_tracker.animate.set_value(1), run_time=4, rate_func=rate_functions.ease_out_cubic), AnimationGroup(t_tracker.animate.set_value(t_limit), run_time=4), lag_ratio=0), AnimationGroup(Restore(self.camera.frame), rate_func=rate_functions.ease_out_cubic), run_time=4)
 
 
         # self.camera.frame.remove_updater(camera_updater)
         # self.play(Restore(self.camera.frame))
-        self.play(AnimationGroup(AnimationGroup(AnimationGroup(FadeOut(focus_dot), FadeOut(directrix_line), FadeOut(pf1_line), FadeOut(f2s_line)), AnimationGroup(FadeOut(p_dot)), run_time=1.5, lag_ratio=0.5)))
+        self.play(AnimationGroup(AnimationGroup(AnimationGroup(FadeOut(focus_dot), FadeOut(directrix_line), FadeOut(pf1_line), FadeOut(f2s_line), FadeOut(circle)), AnimationGroup(FadeOut(p_dot)), run_time=1.5, lag_ratio=0.5)))
 
         self.wait(2)
 

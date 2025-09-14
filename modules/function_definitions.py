@@ -1148,10 +1148,10 @@ class Parabola:
         初始化抛物线
         
         Args:
-            p: 焦点参数，可以是ValueTracker或数值
+            p: 焦准距，可以是ValueTracker或数值
             orientation: 开口方向 'right', 'left', 'up', 'down'
         """
-        self.p = p
+        self.p = p/2
         self.orientation = orientation
     
     def _get_param_value(self, param):

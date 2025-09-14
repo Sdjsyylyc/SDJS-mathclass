@@ -78,13 +78,15 @@ class Scene1Hyperbola(MovingCameraScene):
         pf1_line = always_redraw(lambda: Line(p_dot.get_center(), focus_right.get_center(), color=GRAY, stroke_width=4*line_width_tracker.get_value()))
         pf2_line = always_redraw(lambda: Line(p_dot.get_center(), focus_left.get_center(), color=GRAY, stroke_width=4*line_width_tracker.get_value()))
         f2s_line = always_redraw(lambda: Line(focus_left.get_center(), get_right_phase_segments(), color=RED, stroke_width=6*line_width_tracker.get_value()))
-        self.add(pf1_line, pf2_line, f2s_line)
+        circle1 = always_redraw(lambda: Circle(radius=np.linalg.norm(focus_right.get_center() - p_dot.get_center()), color=GRAY_A, stroke_width=2*line_width_tracker.get_value()).move_to(p_dot.get_center()))
+        circle2 = always_redraw(lambda: Circle(radius=4, color=GRAY_A, stroke_width=2*line_width_tracker.get_value()).move_to(focus_left.get_center()))
+        self.add(pf1_line, pf2_line, f2s_line, circle1, circle2)
         self.play(AnimationGroup(AnimationGroup(line_width_tracker.animate.set_value(1), run_time=4, rate_func=rate_functions.ease_out_cubic), AnimationGroup(t_tracker.animate.set_value(t_limit), run_time=4), lag_ratio=0), AnimationGroup(Restore(self.camera.frame), rate_func=rate_functions.ease_out_cubic), run_time=4)
 
 
         # self.camera.frame.remove_updater(camera_updater)
         # self.play(Restore(self.camera.frame))
-        self.play(AnimationGroup(AnimationGroup(AnimationGroup(FadeOut(focus_right), FadeOut(focus_left), FadeOut(pf1_line), FadeOut(pf2_line), FadeOut(f2s_line)), AnimationGroup(FadeOut(p_dot), FadeOut(q_dot)), run_time=1.5, lag_ratio=0.5)))
+        self.play(AnimationGroup(AnimationGroup(AnimationGroup(FadeOut(focus_right), FadeOut(focus_left), FadeOut(pf1_line), FadeOut(pf2_line), FadeOut(f2s_line), FadeOut(circle1), FadeOut(circle2)), AnimationGroup(FadeOut(p_dot), FadeOut(q_dot)), run_time=1.5, lag_ratio=0.5)))
 
         self.wait(2)
 
